@@ -1,34 +1,35 @@
-# Vercel Deployment Guide - AMC Website
+# Vercel Deployment Guide - AMC Website (Frontend Only)
+
+## ⚠️ Important: Deployment Strategy
+
+Since **Vercel doesn't support PHP natively**, this configuration deploys only your **frontend assets** (built by Vite) to Vercel.
+
+For a complete deployment, you'll need to:
+
+1. **Frontend**: Deploy Vite build to Vercel (this guide)
+2. **Backend**: Deploy Laravel API to a PHP-capable platform (see below)
+
+---
 
 ## ✅ What's Been Configured
 
-I've prepared your Laravel + Vite project for Vercel deployment with the following changes:
-
 ### 1. **Updated vercel.json**
 
-- Configured for Laravel framework
-- Set PHP version to 8.2
-- Build commands for npm and Composer
-- Environment variables for production
+- Builds frontend with Vite
+- Outputs to `dist` directory
+- Sets production environment variables
 
-### 2. **Created API Handler** (`api/index.php`)
-
-- Entry point for Vercel serverless functions
-- Routes requests to Laravel public/index.php
-
-### 3. **Updated AppServiceProvider**
+### 2. **Updated AppServiceProvider**
 
 - Added HTTPS enforcement for production
 - Maintains database view sharing for templates
 
-### 4. **Documentation Files**
+### 3. **Documentation Files**
 
 - `DEPLOYMENT.md` - Detailed deployment steps
 - `vercel-deploy.sh` - Quick-start script
 
----
-
-## 🚀 Quick Deployment Steps
+---## 🚀 Quick Deployment Steps
 
 ### **Step 1: Push to GitHub**
 
@@ -61,43 +62,76 @@ vercel
 
 ### **Step 3: Add Environment Variables**
 
-On the Vercel dashboard for your project, go to **Settings → Environment Variables** and add:
+Vercel environment variables are optional for frontend-only deployment, but you can add:
 
 ```
-APP_NAME=AMC Website
-APP_ENV=production
-APP_KEY=base64:YOUR_KEY_HERE          # Generate with: php artisan key:generate --show
-APP_DEBUG=false
-APP_URL=https://your-project.vercel.app
-
-DB_CONNECTION=mysql                   # or postgres, sqlite
-DB_HOST=your-db-host.com
-DB_PORT=3306
-DB_DATABASE=your_database_name
-DB_USERNAME=your_username
-DB_PASSWORD=your_password
-
-LOG_CHANNEL=stderr
-SESSION_DRIVER=cookie
-CACHE_DRIVER=file
-QUEUE_CONNECTION=sync
+VITE_APP_NAME=AMC Website
+VITE_APP_URL=https://your-project.vercel.app
 ```
 
-### **Step 4: Generate APP_KEY**
+Any variables prefixed with `VITE_` will be available in your frontend code.
 
-Run locally to get your key:
+### **Step 4: Backend (Laravel API) Deployment**
 
-```bash
-php artisan key:generate --show
-```
-
-Copy the value (including `base64:` prefix) and set it in Vercel environment variables.
-
-### **Step 5: Database Setup**
-
-Since Vercel is serverless with ephemeral storage, use an external database:
+Deploy your Laravel backend to a PHP-capable platform:
 
 **Recommended Options:**
+
+- **Railway.app** - Simple Laravel deployment
+- **Heroku** - Classic choice with free tier
+- **DigitalOcean App Platform** - Affordable
+- **Fly.io** - Good performance
+- **PlanetScale** (for database only)
+
+Example: Deploy Laravel to Railway
+
+```bash
+# Install Railway CLI
+npm i -g @railway/cli
+
+# Login and deploy
+railway login
+railway init
+railway up
+```
+
+Update your frontend `vite.config.js` to point to your Laravel API:
+
+```js
+// Example API URL
+const API_URL = process.env.VITE_API_URL || "https://your-api.railway.app/api";
+```
+
+### \*\*Step 5: Database Setup
+
+Use an external managed database service:
+
+- **PlanetScale** (MySQL) - Free tier
+- **Supabase** (PostgreSQL) - Free tier
+- **AWS RDS** - Managed database
+- **MongoDB Atlas** - NoSQL option
+
+Configure your Laravel backend with these credentials.
+
+---
+
+## 🔗 Integration: Frontend + Backend
+
+After deploying both:
+
+1. **Get your API URL** from your Laravel deployment
+2. **Update frontend** to use the API URL:
+    ```js
+    // In your frontend code
+    const API_BASE = "https://your-api-domain.com/api";
+    ```
+3. **Configure CORS** in Laravel (`config/cors.php`):
+    ```php
+    'allowed_origins' => [
+        'https://your-vercel-app.vercel.app',
+    ],
+    ```
+4. **Test the connection** between frontend and backend**Recommended Options:**
 
 - **PlanetScale** (MySQL) - Free tier available
 - **Supabase** (PostgreSQL) - Free tier available
