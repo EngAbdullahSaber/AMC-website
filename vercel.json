@@ -8,7 +8,7 @@
     },
     "functions": {
         "api/index.php": {
-            "runtime": "php8.2"
+            "runtime": "php@8.2"
         }
     }
 }
