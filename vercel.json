@@ -5,10 +5,5 @@
     "env": {
         "APP_ENV": "production",
         "APP_DEBUG": "false"
-    },
-    "functions": {
-        "api/index.php": {
-            "runtime": "now-php@1.0.0"
-        }
     }
 }
