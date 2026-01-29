@@ -1,9 +1,14 @@
 {
-    "buildCommand": "npm run build",
-    "installCommand": "npm install",
-    "outputDirectory": "dist",
-    "framework": "vite",
+    "buildCommand": "npm install && npm run build && composer install --no-dev --optimize-autoloader",
+    "outputDirectory": "public",
+    "installCommand": "npm install && composer install --no-dev --optimize-autoloader",
     "env": {
-        "APP_ENV": "production"
+        "APP_ENV": "production",
+        "APP_DEBUG": "false"
+    },
+    "functions": {
+        "api/index.php": {
+            "runtime": "php8.2"
+        }
     }
 }
