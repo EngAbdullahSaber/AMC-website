@@ -1,0 +1,10 @@
+node_modules
+storage/logs
+storage/framework/cache
+bootstrap/cache
+.env.local
+.env.*.local
+vendor
+.git
+.gitignore
+README.md
